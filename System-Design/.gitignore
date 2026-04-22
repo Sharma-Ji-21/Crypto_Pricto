@@ -1,0 +1,19 @@
+# OS and editor files
+.DS_Store
+.idea/
+.vscode/
+
+# Temporary and backup files
+*.tmp
+*.temp
+*.bak
+*~
+
+# Common generated export/output folders
+exports/
+out/
+dist/
+
+# Diagram tooling caches/outputs
+.mmdc-cache/
+*.drawio.bkp

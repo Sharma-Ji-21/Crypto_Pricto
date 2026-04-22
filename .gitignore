@@ -1,0 +1,23 @@
+# OS
+.DS_Store
+**/.DS_Store
+
+# Editors and IDEs
+.idea/
+.vscode/
+*.iml
+
+# Logs and temp files
+*.log
+*.tmp
+*.temp
+
+# Local environment files
+.env
+.env.local
+.env.*.local
+
+# Flutter desktop targets intentionally excluded in this workspace
+crypto_pricto/linux/
+crypto_pricto/macos/
+crypto_pricto/windows/

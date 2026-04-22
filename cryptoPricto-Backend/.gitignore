@@ -1,0 +1,49 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python version manager
+.python-version
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Test and coverage outputs
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# Type checker and linter caches
+.mypy_cache/
+.pyre/
+.ruff_cache/
+.tox/
+.nox/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Packaging and build artifacts
+build/
+dist/
+*.egg-info/
+pip-wheel-metadata/
+
+# IDE/editor and OS files
+.idea/
+.vscode/
+.DS_Store
+
+# Logs
+*.log
