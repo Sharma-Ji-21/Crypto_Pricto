@@ -8,7 +8,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import load_model
 
-from app.core.constants import COIN_ASSETS, LSTM_FEATURES, SUPPORTED_HORIZONS, WINDOW
+from app.core.constants import COIN_ASSETS, LSTM_FEATURES, WINDOW
 
 
 def normalize_crypto(crypto: str) -> str:
@@ -19,8 +19,8 @@ def normalize_crypto(crypto: str) -> str:
 
 
 def validate_horizon(horizon: int) -> int:
-    if horizon not in SUPPORTED_HORIZONS:
-        raise ValueError("horizon must be one of 1, 7, or 14")
+    if not 1 <= horizon <= 30:
+        raise ValueError("horizon must be between 1 and 30")
     return horizon
 
 

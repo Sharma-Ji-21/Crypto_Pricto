@@ -42,4 +42,3 @@ COIN_ASSETS = {
 }
 
 SUPPORTED_CRYPTOS = [asset.display_name for asset in COIN_ASSETS.values()]
-SUPPORTED_HORIZONS = {1, 7, 14}

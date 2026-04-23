@@ -1,8 +1,8 @@
-from datetime import datetime
+from datetime import date, datetime
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from app.ml.pipeline import normalize_crypto, validate_horizon
+from app.ml.pipeline import normalize_crypto
 
 
 class HealthResponse(BaseModel):
@@ -16,7 +16,7 @@ class CryptoListResponse(BaseModel):
 
 class PredictRequest(BaseModel):
     crypto: str = Field(description="Bitcoin | Ethereum | Dogecoin")
-    horizon: int = Field(description="Forecast horizon: 1, 7, or 14")
+    target_date: date = Field(description="Target prediction date (YYYY-MM-DD)")
 
     @field_validator("crypto")
     @classmethod
@@ -24,11 +24,10 @@ class PredictRequest(BaseModel):
         normalize_crypto(value)
         return value
 
-    @field_validator("horizon")
-    @classmethod
-    def validate_horizon_field(cls, value: int) -> int:
-        validate_horizon(value)
-        return value
+class Metrics(BaseModel):
+    rmse: float
+    mae: float
+    mda: float
 
 
 class PredictionPoint(BaseModel):
@@ -36,20 +35,14 @@ class PredictionPoint(BaseModel):
     predicted_price: float
 
 
-class Metrics(BaseModel):
-    rmse: float
-    mae: float
-    mda: float
-
-
 class PredictResponse(BaseModel):
     model_config = ConfigDict(protected_namespaces=())
 
     status: str = "success"
     crypto: str
-    horizon: int
+    target_date: date
     model_used: str
-    predictions: list[PredictionPoint]
+    predicted_price: float
     metrics: Metrics
 
 

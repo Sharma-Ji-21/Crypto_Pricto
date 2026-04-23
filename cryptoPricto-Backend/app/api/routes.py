@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.core.constants import SUPPORTED_CRYPTOS
 from app.db.models import ErrorLog, Prediction
 from app.db.session import get_db
-from app.ml.pipeline import forecast_prices
+from app.ml.pipeline import forecast_prices, load_price_data, normalize_crypto
 from app.schemas.api import (
     CryptoListResponse,
     ErrorLogResponse,
@@ -38,16 +38,33 @@ def get_cryptos() -> CryptoListResponse:
     responses={400: {"model": ErrorResponse}, 422: {"model": ErrorResponse}},
 )
 def predict(payload: PredictRequest, request: Request, db: Session = Depends(get_db)) -> PredictResponse:
+    crypto_key = normalize_crypto(payload.crypto)
     try:
-        result = forecast_prices(payload.crypto, payload.horizon)
+        df = load_price_data(crypto_key)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+    last_date = df["Date"].max().date()
+    horizon = (payload.target_date - last_date).days
+
+    if horizon <= 0:
+        raise HTTPException(status_code=400, detail="Target date must be in future")
+
+    if horizon > 30:
+        raise HTTPException(status_code=400, detail="Max prediction window is 30 days")
+
+    try:
+        result = forecast_prices(payload.crypto, horizon)
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except FileNotFoundError as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
+    final_prediction = result["predictions"][-1]
+
     prediction_row = Prediction(
         crypto=result["crypto"],
-        horizon=result["horizon"],
+        horizon=horizon,
         model_used=result["model_used"],
         predictions=result["predictions"],
         metrics=result["metrics"],
@@ -55,7 +72,14 @@ def predict(payload: PredictRequest, request: Request, db: Session = Depends(get
     db.add(prediction_row)
     db.commit()
 
-    return PredictResponse(**result)
+    return PredictResponse(
+        status="success",
+        crypto=result["crypto"],
+        target_date=payload.target_date,
+        model_used=result["model_used"],
+        predicted_price=final_prediction["predicted_price"],
+        metrics=result["metrics"],
+    )
 
 
 @router.get("/history", response_model=HistoryResponse)
