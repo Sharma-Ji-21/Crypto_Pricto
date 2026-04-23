@@ -57,6 +57,8 @@ class HistoryItem(BaseModel):
 
     id: int
     crypto: str
+    target_date: str
+    predicted_price: float
     model_used: str
     rmse: float
     mae: float

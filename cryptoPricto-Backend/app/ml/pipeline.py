@@ -124,6 +124,9 @@ def forecast_prices(crypto: str, horizon: int) -> dict:
         raise FileNotFoundError(f"Model file missing: {asset.model_file}")
 
     raw_df = load_price_data(crypto_key)
+    if len(raw_df) < WINDOW:
+        raise ValueError("Not enough data for window size 75")
+
     d = prepare_lstm_frame(raw_df)
 
     model = get_lstm_model(str(asset.model_file))

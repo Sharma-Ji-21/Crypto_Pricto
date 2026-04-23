@@ -85,18 +85,22 @@ def predict(payload: PredictRequest, request: Request, db: Session = Depends(get
 @router.get("/history", response_model=HistoryResponse)
 def history(db: Session = Depends(get_db)) -> HistoryResponse:
     rows = db.query(Prediction).order_by(Prediction.created_at.desc()).all()
-    items = [
-        HistoryItem(
-            id=row.id,
-            crypto=row.crypto,
-            model_used=row.model_used,
-            rmse=float(row.metrics.get("rmse", 0.0)),
-            mae=float(row.metrics.get("mae", 0.0)),
-            mda=float(row.metrics.get("mda", 0.0)),
-            created_at=row.created_at,
+    items = []
+    for row in rows:
+        final_prediction = row.predictions[-1]
+        items.append(
+            HistoryItem(
+                id=row.id,
+                crypto=row.crypto,
+                target_date=final_prediction["date"],
+                predicted_price=final_prediction["predicted_price"],
+                model_used=row.model_used,
+                rmse=float(row.metrics.get("rmse", 0.0)),
+                mae=float(row.metrics.get("mae", 0.0)),
+                mda=float(row.metrics.get("mda", 0.0)),
+                created_at=row.created_at,
+            )
         )
-        for row in rows
-    ]
     return HistoryResponse(history=items)
 
 

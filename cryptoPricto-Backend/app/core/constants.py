@@ -4,7 +4,7 @@ from pathlib import Path
 from app.core.config import DATA_DIR, MODELS_DIR
 
 
-WINDOW = 30
+WINDOW = 75
 LSTM_FEATURES = [
     "Close",
     "Volume",
