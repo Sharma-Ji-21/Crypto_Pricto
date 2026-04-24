@@ -5,9 +5,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    app_name: str = "Crypto Forecast API"
+    app_name: str = "CryptoPricto"
     app_version: str = "1.0.0"
-    api_prefix: str = "/api/v1"
+    api_prefix: str = "/api"
 
     database_url: str = Field(
         default="postgresql+psycopg2://postgres:postgres@localhost:5432/crypto_forecast"
