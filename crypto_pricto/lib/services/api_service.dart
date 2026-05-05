@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import '../models/prediction_model.dart';
 
 class ApiService {
-  static const String baseUrl = 'https://g721qslc-8000.inc1.devtunnels.ms/api';
+  static const String baseUrl = 'http://52.66.192.30:8000/api';
   static const Duration _requestTimeout = Duration(seconds: 25);
 
   Future<List<String>> getCryptos() async {
